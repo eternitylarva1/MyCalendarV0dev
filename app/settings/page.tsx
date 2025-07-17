@@ -13,21 +13,21 @@ export default function SettingsPage() {
   const { currentSemester, setCurrentSemester, availableSemesters } = useCalendarSettings()
 
   const [showSemesterStartDateModal, setShowSemesterStartDateModal] = useState(false)
-  
+
   // 保存用户最后选择的日期，如果没有选择过则使用当前学期开始日期
   const [lastSelectedDate, setLastSelectedDate] = useState(() => {
     const currentStartDate = new Date(currentSemester.startDate)
     return {
       year: currentStartDate.getFullYear(),
       month: currentStartDate.getMonth() + 1,
-      day: currentStartDate.getDate()
+      day: currentStartDate.getDate(),
     }
   })
 
   const handleSemesterStartDateSelect = (year: number, month: number, day: number) => {
     // 更新最后选择的日期
     setLastSelectedDate({ year, month, day })
-    
+
     // 构造新的学期开始日期字符串
     const newStartDate = new Date(year, month - 1, day).toISOString().split("T")[0]
 
@@ -51,14 +51,15 @@ export default function SettingsPage() {
         name: `自定义学期 (${year}年${month}月${day}日开始)`,
         startDate: newStartDate,
         // 保持原有的结束日期或设置一个默认的结束日期
-        endDate: currentSemester.endDate
+        endDate: currentSemester.endDate,
       }
       setCurrentSemester({
-        ...customSemester
+        ...customSemester,
       })
     }
 
     setShowSemesterStartDateModal(false)
+    router.push("/") // 添加这行代码，导航回主页
   }
 
   return (

@@ -17,7 +17,7 @@ export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
     year: 2023,
     season: "spring",
     startDate: "2023-02-20",
-    endDate: "2023-06-30",
+    endDate: "2023-06-19", // 修改：确保与小学期不重叠
   },
   {
     id: "2023-short",
@@ -42,7 +42,7 @@ export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
     year: 2024,
     season: "spring",
     startDate: "2024-02-19",
-    endDate: "2024-06-30",
+    endDate: "2024-06-19", // 修改：确保与小学期不重叠
   },
   {
     id: "2024-short",
@@ -67,7 +67,7 @@ export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
     year: 2025,
     season: "spring",
     startDate: "2025-02-17",
-    endDate: "2025-06-30",
+    endDate: "2025-06-19", // 修改：确保与小学期不重叠
   },
   {
     id: "2025-short",
@@ -92,7 +92,7 @@ export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
     year: 2026,
     season: "spring",
     startDate: "2026-02-16",
-    endDate: "2026-06-30",
+    endDate: "2026-06-19", // 修改：确保与小学期不重叠
   },
   {
     id: "2026-short",
