@@ -13,18 +13,25 @@ export default function SettingsPage() {
   const { currentSemester, setCurrentSemester, availableSemesters } = useCalendarSettings()
 
   const [showSemesterStartDateModal, setShowSemesterStartDateModal] = useState(false)
-  // Initialize modal's selected year, month, day with current semester's start date
-  const currentStartDate = new Date(currentSemester.startDate)
-  const [modalSelectedYear, setModalSelectedYear] = useState(currentStartDate.getFullYear())
-  const [modalSelectedMonth, setModalSelectedMonth] = useState(currentStartDate.getMonth() + 1)
-  const [modalSelectedDay, setModalSelectedDay] = useState(currentStartDate.getDate())
+  
+  // 保存用户最后选择的日期，如果没有选择过则使用当前学期开始日期
+  const [lastSelectedDate, setLastSelectedDate] = useState(() => {
+    const currentStartDate = new Date(currentSemester.startDate)
+    return {
+      year: currentStartDate.getFullYear(),
+      month: currentStartDate.getMonth() + 1,
+      day: currentStartDate.getDate()
+    }
+  })
 
   const handleSemesterStartDateSelect = (year: number, month: number, day: number) => {
-    // Added day parameter
-    // Construct the new semester start date string
+    // 更新最后选择的日期
+    setLastSelectedDate({ year, month, day })
+    
+    // 构造新的学期开始日期字符串
     const newStartDate = new Date(year, month - 1, day).toISOString().split("T")[0]
 
-    // Find if the new start date falls within any existing semester
+    // 查找选择的日期是否在任何现有学期范围内
     const newActiveSemester = availableSemesters.find((s) => {
       const sStart = new Date(s.startDate)
       const sEnd = new Date(s.endDate)
@@ -34,15 +41,20 @@ export default function SettingsPage() {
     })
 
     if (newActiveSemester) {
-      // If the selected date falls within an existing semester, switch to that semester
+      // 如果选择的日期在现有学期范围内，切换到那个学期
       setCurrentSemester(newActiveSemester)
     } else {
-      // If the selected date does not belong to any predefined semester,
-      // update the current semester's start date.
-      // This might mean the user is setting a custom start date or a date outside defined semesters.
-      setCurrentSemester({
+      // 如果选择的日期不属于任何预定义学期，创建一个自定义学期
+      const customSemester = {
         ...currentSemester,
+        id: `custom-${Date.now()}`, // 生成唯一ID
+        name: `自定义学期 (${year}年${month}月${day}日开始)`,
         startDate: newStartDate,
+        // 保持原有的结束日期或设置一个默认的结束日期
+        endDate: currentSemester.endDate
+      }
+      setCurrentSemester({
+        ...customSemester
       })
     }
 
@@ -153,10 +165,6 @@ export default function SettingsPage() {
               <SettingItem
                 label="设置学期开始时间"
                 onClick={() => {
-                  const currentStartDate = new Date(currentSemester.startDate)
-                  setModalSelectedYear(currentStartDate.getFullYear())
-                  setModalSelectedMonth(currentStartDate.getMonth() + 1)
-                  setModalSelectedDay(currentStartDate.getDate()) // Set initial day
                   setShowSemesterStartDateModal(true)
                 }}
               />
@@ -195,9 +203,9 @@ export default function SettingsPage() {
       {/* Month/Day Selector Modal */}
       <MonthSelectorModal
         isOpen={showSemesterStartDateModal}
-        currentYear={modalSelectedYear}
-        currentMonth={modalSelectedMonth}
-        currentDay={modalSelectedDay} // Pass currentDay to the modal
+        currentYear={lastSelectedDate.year}
+        currentMonth={lastSelectedDate.month}
+        currentDay={lastSelectedDate.day}
         isFromSettings={true} // 标识这是来自设置页面的调用
         onMonthSelect={handleSemesterStartDateSelect}
         onClose={() => setShowSemesterStartDateModal(false)}
