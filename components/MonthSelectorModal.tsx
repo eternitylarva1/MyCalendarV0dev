@@ -109,12 +109,14 @@ export function MonthSelectorModal({
         style={{
           top: isFromSettings ? "200px" : "300px", // 设置页面使用更小的top值
           background: "white",
-          width: isFromSettings ? "800px" : "1408px", // 设置页面使用更小的宽度
+          width: isFromSettings ? "100vw" : "1408px", // 设置页面使用全屏宽度
           height: isFromSettings ? "500px" : "751px", // 设置页面使用更小的高度
           overflow: "hidden",
           fontFamily: '"Microsoft YaHei", sans-serif',
-          borderRadius: isFromSettings ? "20px" : "0px", // 设置页面添加圆角
+          borderRadius: isFromSettings ? "0px" : "0px", // 设置页面移除圆角以适配全屏
           boxShadow: isFromSettings ? "0 10px 30px rgba(0,0,0,0.3)" : "none", // 设置页面添加阴影
+          left: isFromSettings ? "0" : "50%", // 设置页面使用左对齐
+          transform: isFromSettings ? "none" : "translateX(-50%)", // 设置页面移除居中变换
         }}
       >
         {/* Top action bar */}
