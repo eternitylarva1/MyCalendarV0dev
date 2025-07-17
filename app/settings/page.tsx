@@ -198,6 +198,7 @@ export default function SettingsPage() {
         currentYear={modalSelectedYear}
         currentMonth={modalSelectedMonth}
         currentDay={modalSelectedDay} // Pass currentDay to the modal
+        isFromSettings={true} // 标识这是来自设置页面的调用
         onMonthSelect={handleSemesterStartDateSelect}
         onClose={() => setShowSemesterStartDateModal(false)}
       />

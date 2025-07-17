@@ -9,6 +9,7 @@ interface MonthSelectorModalProps {
   currentYear: number // Initial year for selection
   currentMonth: number // Initial month for selection
   currentDay: number // Initial day for selection
+  isFromSettings?: boolean // 新增参数，标识是否来自设置页面
   onMonthSelect: (year: number, month: number, day: number) => void // Modified to include day
   onClose: () => void
 }
@@ -18,6 +19,7 @@ export function MonthSelectorModal({
   currentYear,
   currentMonth,
   currentDay, // New prop for initial day
+  isFromSettings = false, // 默认为false
   onMonthSelect,
   onClose,
 }: MonthSelectorModalProps) {
@@ -105,20 +107,21 @@ export function MonthSelectorModal({
       <div
         className="fixed left-1/2 z-[10000] -translate-x-1/2"
         style={{
-          top: "300px", // Fixed top position to match SemesterSelector
+          top: isFromSettings ? "200px" : "300px", // 设置页面使用更小的top值
           background: "white",
-          width: "1408px", // Fixed width to match SemesterSelector
-          height: "751px", // Fixed height to match SemesterSelector
+          width: isFromSettings ? "800px" : "1408px", // 设置页面使用更小的宽度
+          height: isFromSettings ? "500px" : "751px", // 设置页面使用更小的高度
           overflow: "hidden",
           fontFamily: '"Microsoft YaHei", sans-serif',
-          // Removed the additional `transform: scale(${scale})` as the dimensions are now fixed
+          borderRadius: isFromSettings ? "20px" : "0px", // 设置页面添加圆角
+          boxShadow: isFromSettings ? "0 10px 30px rgba(0,0,0,0.3)" : "none", // 设置页面添加阴影
         }}
       >
         {/* Top action bar */}
         <div
           className="flex items-center justify-between"
           style={{
-            height: "90px",
+            height: isFromSettings ? "70px" : "90px", // 设置页面使用更小的头部高度
             padding: "0 40px",
             borderBottom: "1px solid #e5e7eb",
           }}
@@ -126,7 +129,7 @@ export function MonthSelectorModal({
           <button
             onClick={handleCancel}
             style={{
-              fontSize: "32px",
+              fontSize: isFromSettings ? "24px" : "32px", // 设置页面使用更小的字体
               fontWeight: 400,
               color: "#000000",
               background: "none",
@@ -138,17 +141,17 @@ export function MonthSelectorModal({
           </button>
           <div
             style={{
-              fontSize: "36px",
+              fontSize: isFromSettings ? "28px" : "36px", // 设置页面使用更小的字体
               fontWeight: 600,
               color: "#000000",
             }}
           >
-            请选择月份/日期
+            {isFromSettings ? "选择学期开始日期" : "请选择月份/日期"}
           </div>
           <button
             onClick={handleConfirm}
             style={{
-              fontSize: "32px",
+              fontSize: isFromSettings ? "24px" : "32px", // 设置页面使用更小的字体
               fontWeight: 600,
               color: "#4f6ff1",
               background: "none",
@@ -161,7 +164,7 @@ export function MonthSelectorModal({
         </div>
 
         {/* Main selection area */}
-        <div className="flex h-[calc(100%-90px)]">
+        <div className={`flex ${isFromSettings ? "h-[calc(100%-70px)]" : "h-[calc(100%-90px)]"}`}>
           {/* Left - Month selection */}
           <div
             ref={monthListRef}
@@ -176,8 +179,8 @@ export function MonthSelectorModal({
                   onClick={() => handleMonthSelect(month.value)}
                   className="w-full flex items-center justify-center transition-colors"
                   style={{
-                    height: "140px",
-                    fontSize: "64px",
+                    height: isFromSettings ? "80px" : "140px", // 设置页面使用更小的按钮高度
+                    fontSize: isFromSettings ? "36px" : "64px", // 设置页面使用更小的字体
                     fontWeight: isSelected ? 700 : 300,
                     color: isSelected ? "#4f6ff1" : "#000000",
                     background: "none",
@@ -195,7 +198,7 @@ export function MonthSelectorModal({
           {/* Middle separator */}
           <div
             style={{
-              width: "5px",
+              width: isFromSettings ? "3px" : "5px", // 设置页面使用更细的分隔线
               background: "#000000",
               opacity: 0.2,
               height: "100%",
@@ -215,8 +218,8 @@ export function MonthSelectorModal({
                   onClick={() => handleDaySelect(day.value)}
                   className="w-full flex items-center justify-center transition-colors"
                   style={{
-                    height: "140px",
-                    fontSize: "64px",
+                    height: isFromSettings ? "80px" : "140px", // 设置页面使用更小的按钮高度
+                    fontSize: isFromSettings ? "36px" : "64px", // 设置页面使用更小的字体
                     fontWeight: isSelected ? 700 : 300,
                     color: isSelected ? "#4f6ff1" : "#000000",
                     background: "none",
