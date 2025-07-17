@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025年春季学期日历</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      background-color: #f0f2f5;
+      overflow-x: hidden;
+    }
+
+    .calendar-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform-origin: top center;
+      width: 1408px;
+      margin-left: -704px;
+    }
+
+    .header {
+      background: #1e39de;
+      border-radius: 0 0 200px 200px;
+      height: 609px;
+      position: relative;
+      box-shadow: 4px 4px 10px rgba(30, 57, 222, 1);
+    }
+
+    .semester-title {
+      color: white;
+      font-size: 64px;
+      font-weight: 400;
+      text-align: center;
+      position: absolute;
+      top: 224px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .week-header {
+      background: #4159f7;
+      border-radius: 25px;
+      border: 1px solid rgba(0,0,0,0.1);
+      width: 150px;
+      height: 150px;
+      position: absolute;
+      left: 60px;
+      top: 399px;
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .week-header-text {
+      color: white;
+      font-size: 64px;
+      font-weight: 400;
+    }
+
+    .days-header {
+      background: #4159f7;
+      border-radius: 25px;
+      border: 1px solid rgba(0,0,0,0.1);
+      width: 1080px;
+      height: 150px;
+      position: absolute;
+      left: 270px;
+      top: 399px;
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    .day-label {
+      color: white;
+      font-size: 48px;
+      font-weight: 400;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .day-label.highlight {
+      background: #1e39de;
+      border-radius: 15px;
+      width: 100px;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    .calendar-content {
+      background: rgba(230, 230, 230, 0.2);
+      padding: 36px 59px 220px 59px;
+      margin-top: 609px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .month-block {
+      position: relative;
+    }
+
+    .month-title {
+      background: transparent;
+      border-radius: 25px 25px 0 0;
+      width: 1290px;
+      height: 72px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .month-title.centered {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .month-name {
+      font-size: 48px;
+      font-weight: 400;
+      color: #000;
+    }
+
+    .week-numbers {
+      background: white;
+      border-radius: 25px;
+      border: 1px solid rgba(0,0,0,0.1);
+      width: 150px;
+      position: absolute;
+      left: 0;
+      top: 72px;
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .week-number {
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 400;
+      color: #000;
+      position: relative;
+    }
+
+    .week-number.current {
+      background: #1e39de;
+      color: #f5f5f5;
+      border-radius: 15px;
+      margin: 0 16px;
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    .days-grid {
+      background: white;
+      border-radius: 25px;
+      width: 1080px;
+      position: absolute;
+      left: 210px;
+      top: 72px;
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .week-row {
+      height: 90px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 60px;
+    }
+
+    .week-row.current-week {
+      background: rgba(30, 57, 222, 0.05);
+      border-radius: 20px;
+      margin: 0 10px;
+    }
+
+    .day-cell {
+      width: 100px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 400;
+      color: #000;
+      position: relative;
+    }
+
+    .day-cell.inactive {
+      opacity: 0.3;
+    }
+
+    .day-cell.today {
+      color: white;
+    }
+
+    .day-cell.today::before {
+      content: '';
+      background: #1e39de;
+      border-radius: 25px;
+      width: 80px;
+      height: 80px;
+      position: absolute;
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+      z-index: 0;
+    }
+
+    .day-cell.today span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .bottom-nav {
+      background: #fafafa;
+      border-radius: 200px 200px 0 0;
+      padding: 48px 0;
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      width: 1408px;
+      margin-left: -704px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .nav-button {
+      width: 193px;
+      height: 96px;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      font-weight: 400;
+      color: #000;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .nav-button.active {
+      background: #4159f7;
+      color: white;
+      font-weight: 700;
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    @media (max-width: 1408px) {
+      .calendar-container {
+        transform: scale(calc(100vw / 1408)) translateX(-50%);
+        transform-origin: top center;
+      }
+      
+      .bottom-nav {
+        transform: scale(calc(100vw / 1408));
+        transform-origin: bottom center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calendar-container">
+    <div class="header">
+      <div class="semester-title">2025年春季学期</div>
+      
+      <div class="week-header">
+        <div class="week-header-text">周次</div>
+      </div>
+      
+      <div class="days-header">
+        <div class="day-label">周<br>一</div>
+        <div class="day-label">周<br>二</div>
+        <div class="day-label">周<br>三</div>
+        <div class="day-label">周<br>四</div>
+        <div class="day-label highlight">周<br>五</div>
+        <div class="day-label">周<br>六</div>
+        <div class="day-label">周<br>日</div>
+      </div>
+    </div>
+
+    <div class="calendar-content" id="calendar-content">
+      <!-- 日历内容将通过JavaScript动态生成 -->
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-button active">学期</div>
+    <div class="nav-button">月</div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const config = {
+        semesterStartDate: '2025-02-17',
+        year: 2025,
+        months: [
+          { key: '2025-2', name: '2月', weekRows: 1, height: 162, centered: false },
+          { key: '2025-3', name: '3月', weekRows: 4, height: 432, centered: false },
+          { key: '2025-4', name: '4月', weekRows: 5, height: 522, centered: true },
+          { key: '2025-5', name: '5月', weekRows: 4, height: 432, centered: false },
+          { key: '2025-6', name: '6月', weekRows: 5, height: 522, centered: false }
+        ]
+      };
+
+      const chineseNumbers = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', 
+                             '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十'];
+
+      const startDate = new Date(config.semesterStartDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // 计算今天是第几周
+      const dayDiff = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      const currentWeek = dayDiff >= 0 ? Math.floor(dayDiff / 7) : -1;
+
+      const calendarContent = document.getElementById('calendar-content');
+      let currentDate = new Date(startDate);
+      let weekIndex = 0;
+
+      config.months.forEach(monthConfig => {
+        const monthBlock = document.createElement('div');
+        monthBlock.className = 'month-block';
+        monthBlock.style.height = monthConfig.height + 'px';
+
+        // 月份标题
+        const monthTitle = document.createElement('div');
+        monthTitle.className = 'month-title' + (monthConfig.centered ? ' centered' : '');
+        const monthName = document.createElement('div');
+        monthName.className = 'month-name';
+        monthName.textContent = monthConfig.name;
+        monthTitle.appendChild(monthName);
+        monthBlock.appendChild(monthTitle);
+
+        // 周次列
+        const weekNumbers = document.createElement('div');
+        weekNumbers.className = 'week-numbers';
+
+        // 日期网格
+        const daysGrid = document.createElement('div');
+        daysGrid.className = 'days-grid';
+
+        for (let i = 0; i < monthConfig.weekRows; i++) {
+          // 周次
+          const weekNumber = document.createElement('div');
+          weekNumber.className = 'week-number';
+          if (weekIndex === currentWeek) {
+            weekNumber.classList.add('current');
+          }
+          weekNumber.textContent = chineseNumbers[weekIndex] || (weekIndex + 1);
+          weekNumbers.appendChild(weekNumber);
+
+          // 这一周的日期行
+          const weekRow = document.createElement('div');
+          weekRow.className = 'week-row';
+          if (weekIndex === currentWeek) {
+            weekRow.classList.add('current-week');
+          }
+
+          for (let j = 0; j < 7; j++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'day-cell';
+
+            const daySpan = document.createElement('span');
+            daySpan.textContent = currentDate.getDate();
+            dayCell.appendChild(daySpan);
+
+            // 检查是否是当前月份
+            const [year, month] = monthConfig.key.split('-').map(Number);
+            if (currentDate.getFullYear() !== year || (currentDate.getMonth() + 1) !== month) {
+              dayCell.classList.add('inactive');
+            }
+
+            // 检查是否是今天
+            if (currentDate.getTime() === today.getTime()) {
+              dayCell.classList.add('today');
+            }
+
+            weekRow.appendChild(dayCell);
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+
+          daysGrid.appendChild(weekRow);
+          weekIndex++;
+        }
+
+        monthBlock.appendChild(weekNumbers);
+        monthBlock.appendChild(daysGrid);
+        calendarContent.appendChild(monthBlock);
+      });
+
+      // 响应式缩放
+      function scaleCalendar() {
+        const container = document.querySelector('.calendar-container');
+        const bottomNav = document.querySelector('.bottom-nav');
+        const scale = Math.min(1, window.innerWidth / 1408);
+        
+        container.style.transform = `translateX(-50%) scale(${scale})`;
+        bottomNav.style.transform = `translateX(-50%) scale(${scale})`;
+        
+        // 调整body高度
+        const containerHeight = container.offsetHeight;
+        document.body.style.height = (containerHeight * scale + 200) + 'px';
+      }
+
+      scaleCalendar();
+      window.addEventListener('resize', scaleCalendar);
+
+      // 导航按钮交互
+      const navButtons = document.querySelectorAll('.nav-button');
+      navButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          navButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
