@@ -67,14 +67,14 @@ export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
     year: 2025,
     season: "spring",
     startDate: "2025-02-17",
-    endDate: "2025-06-19", // 修改：确保与小学期不重叠
+    endDate: "2025-06-20", // 修改：确保与小学期不重叠
   },
   {
     id: "2025-short",
     name: "2025年小学期",
     year: 2025,
     season: "short",
-    startDate: "2025-06-20", // 默认6月20日
+    startDate: "2025-06-23", // 默认6月20日
     endDate: "2025-07-31", // 延续到7月底
   },
   // 2025-2026学年
