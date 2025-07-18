@@ -50,7 +50,7 @@ const chineseNumbers = [
 /* ------------------------------------------------------------------ */
 export function useCalendarData(config: CalendarConfig, semesterInfo: SemesterInfo) {
   const [calendarData, setCalendarData] = useState<MonthData[]>([])
-  const [currentWeek, setCurrentWeek] = useState(-1)
+  // Removed currentWeek state
 
   useEffect(() => {
     generateCalendarData(semesterInfo)
@@ -69,8 +69,7 @@ export function useCalendarData(config: CalendarConfig, semesterInfo: SemesterIn
     mondayOfWeek0.setDate(mondayOfWeek0.getDate() - (startDow === 0 ? 6 : startDow - 1))
 
     /* ---------- figure out today's week index ----------- */
-    const daysFromStart = Math.floor((today.getTime() - mondayOfWeek0.getTime()) / 86400000)
-    setCurrentWeek(Math.floor(daysFromStart / 7))
+    // Removed currentWeek calculation
 
     /* ---------- iterate week-by-week until after end ----- */
     const allWeeks: WeekData[] = []
@@ -102,7 +101,7 @@ export function useCalendarData(config: CalendarConfig, semesterInfo: SemesterIn
 
       allWeeks.push({
         weekNumber: weekLabel,
-        isCurrentWeek: semesterWeekIdx === currentWeek,
+        isCurrentWeek: weekDays.some((day) => day.isToday), // Check if any day in this week is today
         days: weekDays,
       })
       semesterWeekIdx++
@@ -146,7 +145,7 @@ export function useCalendarData(config: CalendarConfig, semesterInfo: SemesterIn
     setCalendarData(result)
   }
 
-  return { calendarData, currentWeek }
+  return { calendarData, currentWeek: -1 } // currentWeek is no longer used directly for highlighting
 }
 
 /* ------------------------------------------------------------------ */
@@ -162,6 +161,10 @@ export function useMonthViewData(year: number, month: number, semesterStartDate:
     const semStart = new Date(`${semesterStartDate}T00:00:00`)
     const semEnd = new Date(`${semesterEndDate}T00:00:00`)
 
+    const startDow = semStart.getDay() // Sun=0 … Sat=6
+    const mondayOfWeek0 = new Date(semStart)
+    mondayOfWeek0.setDate(mondayOfWeek0.getDate() - (startDow === 0 ? 6 : startDow - 1))
+
     /* ------- align grid start to Monday before month ----- */
     const firstOfMonth = new Date(year, month - 1, 1)
     const firstDow = firstOfMonth.getDay()
@@ -169,21 +172,21 @@ export function useMonthViewData(year: number, month: number, semesterStartDate:
     gridStart.setDate(gridStart.getDate() - (firstDow === 0 ? 6 : firstDow - 1))
 
     const weeks: WeekData[] = []
+    // Removed daysFromMonday0ToToday and currentSemesterWeek
     const cursor = new Date(gridStart)
 
     for (let w = 0; w < 6; w++) {
       const weekDays: DayData[] = []
 
-      const dayOffset = Math.floor((cursor.getTime() - semStart.getTime()) / 86400000)
-      const semesterWeekIdx = Math.floor(dayOffset / 7)
+      const daysFromMonday0ToCursor = Math.floor((cursor.getTime() - mondayOfWeek0.getTime()) / 86400000)
+      const semesterWeekIdx = Math.floor(daysFromMonday0ToCursor / 7)
 
       const weekLabel =
         cursor < semStart || cursor > semEnd
           ? "—"
           : (chineseNumbers[semesterWeekIdx] ?? (semesterWeekIdx + 1).toString())
 
-      const isCurrentWeek = Math.floor((today.getTime() - semStart.getTime()) / 604800000) === semesterWeekIdx
-
+      // Changed isCurrentWeek calculation
       for (let d = 0; d < 7; d++) {
         const dCopy = new Date(cursor)
         weekDays.push({
@@ -197,6 +200,7 @@ export function useMonthViewData(year: number, month: number, semesterStartDate:
         })
         cursor.setDate(cursor.getDate() + 1)
       }
+      const isCurrentWeek = weekDays.some((day) => day.isToday)
 
       weeks.push({ weekNumber: weekLabel, isCurrentWeek, days: weekDays })
 
