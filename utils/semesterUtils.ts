@@ -75,7 +75,7 @@ export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
     year: 2025,
     season: "short",
     startDate: "2025-06-23", // 默认6月20日
-    endDate: "2025-07-31", // 延续到7月底
+    endDate: "2025-07-20", // 延续到7月底
   },
   // 2025-2026学年
   {
@@ -99,8 +99,8 @@ export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
     name: "2026年小学期",
     year: 2026,
     season: "short",
-    startDate: "2026-06-20",
-    endDate: "2026-07-31",
+    startDate: "2026-06-23",
+    endDate: "2026-07-20",
   },
 ]
 
