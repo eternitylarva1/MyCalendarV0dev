@@ -74,7 +74,7 @@ export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
     name: "2025年小学期",
     year: 2025,
     season: "short",
-    startDate: "2025-06-20", // 默认6月20日
+    startDate: "2025-06-23", // 默认6月20日
     endDate: "2025-07-31", // 延续到7月底
   },
   // 2025-2026学年
