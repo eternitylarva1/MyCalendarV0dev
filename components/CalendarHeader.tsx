@@ -53,7 +53,7 @@ export function CalendarHeader({ scale }: CalendarHeaderProps) {
           zIndex: 20,
         }}
       >
-        ⚙️
+        <img src="settings.svg" alt="设置" style={{ width: "60px", height: "60px" }} />
       </button>
 
       {/* 学期选择器 */}

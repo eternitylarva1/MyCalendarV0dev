@@ -58,18 +58,22 @@ export function useCalendarData(config: CalendarConfig, semesterInfo: SemesterIn
   }, [semesterInfo])
 
   const generateCalendarData = (semester: SemesterInfo) => {
-    const semesterStart = new Date(`${semester.startDate}T00:00:00`)
-    const semesterEnd = new Date(`${semester.endDate}T00:00:00`)
+    // 修复时区问题：确保日期解析时使用本地时区
+    const semesterStart = new Date(semester.startDate + "T00:00:00")
+    const semesterEnd = new Date(semester.endDate + "T00:00:00")
     const today = new Date()
     today.setHours(0, 0, 0, 0)
+
+    console.log("Semester start:", semesterStart.toDateString())
+    console.log("Semester end:", semesterEnd.toDateString())
+    console.log("Today:", today.toDateString())
 
     /* ---------- align semester start to Monday ---------- */
     const startDow = semesterStart.getDay() // Sun=0 … Sat=6
     const mondayOfWeek0 = new Date(semesterStart)
     mondayOfWeek0.setDate(mondayOfWeek0.getDate() - (startDow === 0 ? 6 : startDow - 1))
 
-    /* ---------- figure out today's week index ----------- */
-    // Removed currentWeek calculation
+    console.log("Monday of week 0:", mondayOfWeek0.toDateString())
 
     /* ---------- iterate week-by-week until after end ----- */
     const allWeeks: WeekData[] = []
@@ -142,6 +146,7 @@ export function useCalendarData(config: CalendarConfig, semesterInfo: SemesterIn
         }
       })
 
+    console.log("Generated calendar data:", result)
     setCalendarData(result)
   }
 
@@ -158,8 +163,9 @@ export function useMonthViewData(year: number, month: number, semesterStartDate:
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    const semStart = new Date(`${semesterStartDate}T00:00:00`)
-    const semEnd = new Date(`${semesterEndDate}T00:00:00`)
+    // 修复时区问题：确保日期解析时使用本地时区
+    const semStart = new Date(semesterStartDate + "T00:00:00")
+    const semEnd = new Date(semesterEndDate + "T00:00:00")
 
     const startDow = semStart.getDay() // Sun=0 … Sat=6
     const mondayOfWeek0 = new Date(semStart)
@@ -172,7 +178,6 @@ export function useMonthViewData(year: number, month: number, semesterStartDate:
     gridStart.setDate(gridStart.getDate() - (firstDow === 0 ? 6 : firstDow - 1))
 
     const weeks: WeekData[] = []
-    // Removed daysFromMonday0ToToday and currentSemesterWeek
     const cursor = new Date(gridStart)
 
     for (let w = 0; w < 6; w++) {

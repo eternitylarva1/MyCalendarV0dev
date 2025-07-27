@@ -1,108 +1,59 @@
 import type { SemesterInfo } from "../types/calendar"
 
-// 预定义的学期数据 - 扩展更多学年，并加入小学期
-export const AVAILABLE_SEMESTERS: SemesterInfo[] = [
-  // 2022-2023学年
-  {
-    id: "2022-fall",
-    name: "2022年秋季学期",
-    year: 2022,
-    season: "fall",
-    startDate: "2022-09-05",
-    endDate: "2023-01-15",
-  },
-  {
-    id: "2023-spring",
-    name: "2023年春季学期",
-    year: 2023,
-    season: "spring",
-    startDate: "2023-02-20",
-    endDate: "2023-06-19", // 修改：确保与小学期不重叠
-  },
-  {
-    id: "2023-short",
-    name: "2023年小学期",
-    year: 2023,
-    season: "short",
-    startDate: "2023-06-20",
-    endDate: "2023-07-31",
-  },
-  // 2023-2024学年
-  {
-    id: "2023-fall",
-    name: "2023年秋季学期",
-    year: 2023,
-    season: "fall",
-    startDate: "2023-09-04",
-    endDate: "2024-01-15",
-  },
-  {
-    id: "2024-spring",
-    name: "2024年春季学期",
-    year: 2024,
-    season: "spring",
-    startDate: "2024-02-19",
-    endDate: "2024-06-19", // 修改：确保与小学期不重叠
-  },
-  {
-    id: "2024-short",
-    name: "2024年小学期",
-    year: 2024,
-    season: "short",
-    startDate: "2024-06-20",
-    endDate: "2024-07-31",
-  },
-  // 2024-2025学年
-  {
-    id: "2024-fall",
-    name: "2024年秋季学期",
-    year: 2024,
-    season: "fall",
-    startDate: "2024-09-02",
-    endDate: "2025-01-15",
-  },
-  {
-    id: "2025-spring",
-    name: "2025年春季学期",
-    year: 2025,
-    season: "spring",
-    startDate: "2025-02-17",
-    endDate: "2025-06-19", // 修改：确保与小学期不重叠
-  },
-  {
-    id: "2025-short",
-    name: "2025年小学期",
-    year: 2025,
-    season: "short",
-    startDate: "2025-06-23", // 默认6月20日
-    endDate: "2025-07-20", // 延续到7月底
-  },
-  // 2025-2026学年
-  {
-    id: "2025-fall",
-    name: "2025年秋季学期",
-    year: 2025,
-    season: "fall",
-    startDate: "2025-09-01",
-    endDate: "2026-01-15",
-  },
-  {
-    id: "2026-spring",
-    name: "2026年春季学期",
-    year: 2026,
-    season: "spring",
-    startDate: "2026-02-16",
-    endDate: "2026-06-19", // 修改：确保与小学期不重叠
-  },
-  {
-    id: "2026-short",
-    name: "2026年小学期",
-    year: 2026,
-    season: "short",
-    startDate: "2026-06-23",
-    endDate: "2026-07-20",
-  },
-]
+// 动态生成学期数据的函数
+function generateSemesterData(): SemesterInfo[] {
+  const semesters: SemesterInfo[] = []
+  const currentYear = new Date().getFullYear()
+
+  // 从2022年开始，生成到当前年份+4年
+  const startYear = 2022
+  const endYear = currentYear + 4
+
+  for (let year = startYear; year <= endYear; year++) {
+    // 秋季学期 (当年9月 - 次年1月)
+    semesters.push({
+      id: `${year}-fall`,
+      name: `${year}年秋季学期`,
+      year: year,
+      season: "fall",
+      startDate: `${year}-09-01`,
+      endDate: `${year + 1}-01-15`,
+    })
+
+    // 春季学期 (次年2月 - 次年6月)
+    const springYear = year + 1
+    if (springYear <= endYear) {
+      semesters.push({
+        id: `${springYear}-spring`,
+        name: `${springYear}年春季学期`,
+        year: springYear,
+        season: "spring",
+        startDate: `${springYear}-02-16`,
+        endDate: `${springYear}-06-19`,
+      })
+
+      // 小学期 (次年6月 - 次年7月)
+      semesters.push({
+        id: `${springYear}-short`,
+        name: `${springYear}年小学期`,
+        year: springYear,
+        season: "short",
+        startDate: `${springYear}-06-20`,
+        endDate: `${springYear}-07-31`,
+      })
+    }
+  }
+
+  // 按时间顺序排序
+  return semesters.sort((a, b) => {
+    const dateA = new Date(a.startDate + "T00:00:00")
+    const dateB = new Date(b.startDate + "T00:00:00")
+    return dateA.getTime() - dateB.getTime()
+  })
+}
+
+// 动态生成的学期数据
+export const AVAILABLE_SEMESTERS: SemesterInfo[] = generateSemesterData()
 
 // 获取当前应该显示的学期
 export function getCurrentSemester(): SemesterInfo {
@@ -182,4 +133,15 @@ export function getMonthConfigsForSemester(semester: SemesterInfo) {
   }
 
   return configs
+}
+
+// 辅助函数：获取学期生成的年份范围信息（用于调试）
+export function getSemesterYearRange() {
+  const currentYear = new Date().getFullYear()
+  return {
+    startYear: 2022,
+    endYear: currentYear + 4,
+    currentYear,
+    totalSemesters: AVAILABLE_SEMESTERS.length,
+  }
 }

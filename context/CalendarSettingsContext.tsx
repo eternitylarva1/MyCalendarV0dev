@@ -16,6 +16,7 @@ export function CalendarSettingsProvider({ children }: { children: ReactNode }) 
   const [currentSemester, setCurrentSemesterState] = useState<SemesterInfo>(getCurrentSemester())
 
   const setCurrentSemester = (semester: SemesterInfo) => {
+    console.log("Setting new semester:", semester) // 添加调试日志
     setCurrentSemesterState(semester)
   }
 

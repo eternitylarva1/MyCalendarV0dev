@@ -90,7 +90,7 @@ export function MonthView({ monthData, onBackClick, onMonthChange, scale }: Mont
             justifyContent: "center",
           }}
         >
-          ⚙️
+           <img src="settings.svg" alt="设置" style={{ width: "60px", height: "60px" }} />
         </button>
 
         {/* 月份选择按钮 */}

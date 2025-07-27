@@ -16,7 +16,7 @@ export default function SettingsPage() {
 
   // 保存用户最后选择的日期，如果没有选择过则使用当前学期开始日期
   const [lastSelectedDate, setLastSelectedDate] = useState(() => {
-    const currentStartDate = new Date(currentSemester.startDate)
+    const currentStartDate = new Date(currentSemester.startDate + "T00:00:00") // 修复：添加时间部分
     return {
       year: currentStartDate.getFullYear(),
       month: currentStartDate.getMonth() + 1,
@@ -28,38 +28,55 @@ export default function SettingsPage() {
     // 更新最后选择的日期
     setLastSelectedDate({ year, month, day })
 
-    // 构造新的学期开始日期字符串
-    const newStartDate = new Date(year, month - 1, day).toISOString().split("T")[0]
+    // 构造新的学期开始日期字符串 - 修复时区问题
+    const selectedDate = new Date(year, month - 1, day) // 使用本地时区构造日期
+    // 格式化为 YYYY-MM-DD 格式，避免时区转换问题
+    const newStartDate = `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`
 
-    // 查找选择的日期是否在任何现有学期范围内
-    const newActiveSemester = availableSemesters.find((s) => {
-      const sStart = new Date(s.startDate)
-      const sEnd = new Date(s.endDate)
-      const selectedDate = new Date(year, month - 1, day)
+    console.log("Selected date components:", { year, month, day })
+    console.log("Constructed selectedDate:", selectedDate)
+    console.log("Formatted newStartDate:", newStartDate)
 
+    // 查找选择的日期原本属于哪个学期，以确定结束日期
+    const originalSemester = availableSemesters.find((s) => {
+      const sStart = new Date(s.startDate + "T00:00:00") // 修复：添加时间部分
+      const sEnd = new Date(s.endDate + "T00:00:00") // 修复：添加时间部分
+      console.log(`Checking semester ${s.name}: ${sStart.toDateString()} - ${sEnd.toDateString()}`)
+      console.log(`Selected date: ${selectedDate.toDateString()}`)
       return selectedDate >= sStart && selectedDate <= sEnd
     })
 
-    if (newActiveSemester) {
-      // 如果选择的日期在现有学期范围内，切换到那个学期
-      setCurrentSemester(newActiveSemester)
+    // 确定结束日期
+    let newEndDate: string
+    if (originalSemester) {
+      // 如果找到了原始学期，使用原始学期的结束日期
+      newEndDate = originalSemester.endDate
+      console.log(`Selected date belongs to ${originalSemester.name}, using its end date: ${newEndDate}`)
     } else {
-      // 如果选择的日期不属于任何预定义学期，创建一个自定义学期
-      const customSemester = {
-        ...currentSemester,
-        id: `custom-${Date.now()}`, // 生成唯一ID
-        name: `自定义学期 (${year}年${month}月${day}日开始)`,
-        startDate: newStartDate,
-        // 保持原有的结束日期或设置一个默认的结束日期
-        endDate: currentSemester.endDate,
-      }
-      setCurrentSemester({
-        ...customSemester,
-      })
+      // 如果没有找到原始学期，使用默认的4个月后
+      const endDate = new Date(selectedDate)
+      endDate.setMonth(endDate.getMonth() + 4)
+      // 格式化结束日期，避免时区问题
+      newEndDate = `${endDate.getFullYear()}-${(endDate.getMonth() + 1).toString().padStart(2, "0")}-${endDate.getDate().toString().padStart(2, "0")}`
+      console.log(`Selected date doesn't belong to any existing semester, using default 4 months later: ${newEndDate}`)
     }
 
+    // 创建自定义学期
+    const customSemester = {
+      id: `custom-${Date.now()}`, // 生成唯一ID
+      name: originalSemester?.name || `${year}年自定义学期`, // 使用原始学期名称，如果没有则使用年份+自定义学期
+      year: year,
+      season: originalSemester?.season || currentSemester.season, // 使用原始学期的类型，如果没有则使用当前学期类型
+      startDate: newStartDate,
+      endDate: newEndDate,
+    }
+
+    console.log("Creating custom semester:", customSemester)
+    console.log("Original semester found:", originalSemester)
+    setCurrentSemester(customSemester)
+
     setShowSemesterStartDateModal(false)
-    router.push("/") // 添加这行代码，导航回主页
+    router.push("/") // 导航回主页
   }
 
   return (
@@ -169,7 +186,7 @@ export default function SettingsPage() {
                   setShowSemesterStartDateModal(true)
                 }}
               />
-              <SettingItem label="设置学校额外假期" onClick={() => console.log("设置学校额外假期")} />
+              <SettingItem label="设置学校额外假期" onClick={() => router.push("/settings/holidays")} />
               <SettingItem label="设置特殊时间节点" onClick={() => console.log("设置特殊时间节点")} isLast={true} />
             </div>
           </div>
@@ -194,8 +211,8 @@ export default function SettingsPage() {
                 overflow: "hidden",
               }}
             >
-              <SettingItem label="关于我们" onClick={() => console.log("关于我们")} />
-              <SettingItem label="数据备份" onClick={() => console.log("数据备份")} isLast={true} />
+              <SettingItem label="关于我们" onClick={() => router.push("/settings/about")} />
+              <SettingItem label="数据备份" onClick={() => router.push("/settings/backup")} isLast={true} />
             </div>
           </div>
         </main>

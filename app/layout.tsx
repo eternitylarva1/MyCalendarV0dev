@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
 import { CalendarSettingsProvider } from "@/context/CalendarSettingsContext" // 导入 CalendarSettingsProvider
+import { HolidayProvider } from "@/context/HolidayContext" // 导入 HolidayProvider
 
 export const metadata: Metadata = {
   title: "v0 App",
@@ -21,9 +22,7 @@ export default function RootLayout({
       </head>
       <body>
         <CalendarSettingsProvider>
-          {" "}
-          {/* 使用 CalendarSettingsProvider 包裹子组件 */}
-          {children}
+          <HolidayProvider>{children}</HolidayProvider>
         </CalendarSettingsProvider>
       </body>
     </html>

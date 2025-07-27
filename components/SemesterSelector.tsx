@@ -80,16 +80,12 @@ export function SemesterSelector({ currentSemester, availableSemesters, onSemest
         }}
       >
         {currentSemester.name} {/* 这是您希望露出的“2024年春季学期”文字 */}
-        <svg
-          width="32" // 恢复到 32px
-          height="20" // 恢复到 20px
-          viewBox="0 0 32 20"
-          fill="none"
-          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-          // style={{ marginTop: "8px" }} // 移除此行，通过flexbox实现垂直居中
-        >
-          <path d="M2 2L16 16L30 2" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <img
+                 src="fall.svg"
+                 alt="下拉箭头"
+                 className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                 style={{ width: "50px", height: "50px" }}
+               />
       </button>
 
       {/* 下拉菜单和遮罩 */}

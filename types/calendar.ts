@@ -6,6 +6,7 @@ export interface DayData {
   dayOfWeek: number // 0=周日, 1=周一, ..., 6=周六
   lunarDate?: string // 农历日期
   holiday?: string // 节假日
+  isHoliday?: boolean // 是否是假期
 }
 
 export interface WeekData {
@@ -51,4 +52,18 @@ export interface SemesterInfo {
 export interface SemesterConfig {
   current: SemesterInfo
   available: SemesterInfo[]
+}
+
+// 新增假期相关类型
+export interface Holiday {
+  id: string
+  name: string
+  startDate: string
+  endDate: string
+  type: "national" | "school" | "custom" // 国家法定假日、学校假期、自定义假期
+  description?: string
+}
+
+export interface HolidayConfig {
+  holidays: Holiday[]
 }
